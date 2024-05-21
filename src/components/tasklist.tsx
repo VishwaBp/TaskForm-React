@@ -8,7 +8,11 @@ import {
     TableRow,
     Paper
 } from '@mui/material';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import {useNavigate} from "react-router-dom";
+import {deleteTask} from "../store/actions";
 
 /*const tasks = [
     {
@@ -63,32 +67,58 @@ function TaskList(){
 
     const tasks = useSelector((state: { data:any[] })=>state.data)
     debugger;
+    const navigate  = useNavigate();
+    const dispatch = useDispatch()
+
+    const navigateToAddTask = ()=>{
+        navigate("/entry")
+    }
+    const deleteTaskItem = (e:any) => {
+        dispatch(deleteTask(e))
+    }
+
+    const EditTask = (e:any) => {
+       navigate(`/edit/${e.id}`)
+        // navigate("/edit",{:{id:e.id}})
+    }
     return (
+<div>
+        <Button onClick={navigateToAddTask} variant="contained">Add Task</Button >
+
 <TableContainer component={Paper}>
     <Table sx = {{minWidth:60}} aria-label="simple Table"></Table>
     <TableHead>
         <TableRow>
-            <TableCell>TaskName</TableCell>
-            <TableCell align="right">TaskTitle</TableCell>
+
+            <TableCell align="right">TaskName</TableCell>
             <TableCell align="right">Description&nbsp;(g)</TableCell>
             <TableCell align="right">due_date&nbsp;(g)</TableCell>
             <TableCell align="right">status&nbsp;(g)</TableCell>
+            <TableCell align="right">Actions</TableCell>
+
         </TableRow>
     </TableHead>
     <TableBody>
         {tasks.map((row)=>
-        <TableRow key ={row.task}>
-            <TableCell component = "th" scope = "row">
-                {row.task}
-            </TableCell>
-            <TableCell align = "right">{row.title}</TableCell>
+        <TableRow key ={row.id}>
+            <TableCell align = "right">{row.name}</TableCell>
             <TableCell align = "right">{row.description}</TableCell>
             <TableCell align = "right">{row.due_date}</TableCell>
             <TableCell align = "right">{row.status}</TableCell>
+            <TableCell align = "right">
+                <Button variant="contained" onClick={() => EditTask(row) }>
+                    Edit
+                </Button>
+
+                <Button variant="contained" onClick={() => deleteTaskItem(row) }>
+                    Delete
+                </Button>
+            </TableCell>
         </TableRow>
             ) }
     </TableBody>
 </TableContainer>
+</div>
     )
 }
 

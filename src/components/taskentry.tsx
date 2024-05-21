@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -8,13 +8,13 @@ import Container from '@mui/material/Container';
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {submitTask} from "../store/actions";
-import {v4 as uuid}from 'uuid';
-import {useNavigate} from "react-router-dom";
+
+import {useNavigate, useParams} from "react-router-dom";
+// import { useHistory } from 'react-router-dom';
 
 // const FormData = ()=>{
-
 
 const Status = [
     {
@@ -27,12 +27,29 @@ const Status = [
     }
     ]
  function TaskEntry(){
+    let {id} = useParams();
      const[formdata,setFormData] = useState({
-         id:uuid(),
-             name:'',
+         id:null,
+         name:'',
          status:'',
-     description:''
- });
+         description:'',
+         Due_date:''
+     });
+     const tasks = useSelector((state: { data: any[] }) => state.data)
+
+     useEffect( () => {
+         if(id){
+             const data = tasks.find(item => item.id == id)
+             setFormData(data);
+         }
+     },[])
+
+         /*  if(id){
+               const data = tasks.find(item => item.id == id)
+               setFormData(data);
+           }*/
+    debugger;
+
      const handleChange = (e:any)=>{
          const{name,value } = e.target;
          setFormData({
@@ -41,13 +58,20 @@ const Status = [
      };
   const dispatch = useDispatch()
      const navigate  = useNavigate();
+     // const history = useHistory();
+const cancel = ()=> {
+    navigate("/");
+}
      const handleSubmit = (e:any)=>{
          e.preventDefault();
          console.log('Form Submitted',formdata);
          dispatch(submitTask(formdata))
          navigate('/')
+         // history.push('/')
 
      };
+
+
      return (
          <Container maxWidth= "sm">
          <Box
@@ -68,6 +92,7 @@ const Status = [
                      value = {formdata.name}
                      onChange={handleChange}
                  />
+
                  <TextField
                      id="outlined-multiline-static"
                      label="Multiline"
@@ -75,6 +100,14 @@ const Status = [
                      rows={4}
                      name = "description"
                      value = {formdata.description}
+                     onChange={handleChange}
+                 />
+                 <TextField
+                     required
+                     id="outlined-required"
+                     label="Required"
+                     name = "Due Date"
+                     value = {formdata.Due_date}
                      onChange={handleChange}
                  />
                  <TextField
@@ -100,9 +133,10 @@ const Status = [
 
              </div>
              <Stack spacing={2} direction="row">
-                 {/*<Button variant="text">Text</Button>*/}
+
                  <Button type = "submit" variant="contained">Submit</Button >
-                 {/*<Button variant="outlined">Outlined</Button>*/}
+                 <Button onClick={cancel} variant="contained">Cancel</Button >
+
              </Stack>
          </Box>
          </Container>)

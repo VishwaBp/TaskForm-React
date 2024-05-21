@@ -41,6 +41,7 @@ const App:React.FC=()=>{
       <Route path="/"  element={<Tasklist/>}/>
       <Route path="/entry"  element={<Taskentry/>}/>
       <Route path="/view/:id"  element={<Taskdetailsview/>}/>
+      <Route path="/edit/:id"  element={<Taskentry/>}/>
     </Routes>
   </Router>)
 }

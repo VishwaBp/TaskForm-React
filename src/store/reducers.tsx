@@ -1,23 +1,13 @@
-import {SET_DATA, SUBMIT_TASK} from './actions';
+import {DELETE_TASK, SET_DATA, SUBMIT_TASK} from './actions';
+import {v4 as uuid}from 'uuid';
+
 const initialState = {
 data : [
     {
-        task : 1, title:'task1', description:'description1' ,due_date:'may1', status: 'pending'
-
-    },
-    {
-        task : 2, title:'task2', description:'description2' ,due_date:'may1', status: 'pending'
-
-    },
-    {
-        task : 3, title:'task3', description:'description3' ,due_date:'may1', status: 'pending'
-
-    },
-    {
-        task : 4, title:'task4', description:'description4' ,due_date:'may1', status: 'pending'
+       id:1, task : 1, name:'task1', description:'description1' ,due_date:'may1', status: '0'
 
     }
-]
+    ]
 };
 
 const reducer = (state = initialState,action:any)=>{
@@ -31,13 +21,23 @@ const reducer = (state = initialState,action:any)=>{
                 data:action.payload,
             };
         case SUBMIT_TASK:
+if(action.payload.id){
+   let ind =  state.data.findIndex( item => item.id == action.payload.id );
+   state.data.splice(ind,1,action.payload);
+}
+else{
+    action.payload.id = uuid();
+    state.data.push(action.payload)
+}
 
-            state.data.push(action.payload)
 
             return {
                 ...state,
 
             };
+        case DELETE_TASK:
+            state.data = state.data.filter( item => item.id != action.payload.id);
+            return {...state};
         default:return state;
     }};
 
